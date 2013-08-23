@@ -48,6 +48,35 @@ autocmd InsertEnter * match ExtraWhiteSpace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
+" Data from other vim to be merged later
+"set backupdir=$HOMEDRIVE$HOMEPATH/AppData/LocalLow/Vim/backup " where to put backup files
+"set directory=$HOMEDRIVE$HOMEPATH/AppData/LocalLow/Vim/tmp " directory to place swap files in
+"set autoindent
+"set smartindent
+"set incsearch
+"
+"set guifont=consolas:h11
+"
+"highlight ExtraWhitespace ctermbg=red guibg=red
+"match ExtraWhitespace /\s\+$/
+"autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+"autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+"autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+"autocmd BufWinLeave * call clearmatches()
+"
+"highlight TabWhitespace ctermbg=red guibg=red
+"match TabWhitespace /\t\+/
+"autocmd BufWinEnter * match TabWhitespace /\s\+$/
+"autocmd InsertEnter * match TabWhitespace /\s\+\%#\@<!$/
+"autocmd InsertLeave * match TabWhitespace /\s\+$/
+"autocmd BufWinLeave * call clearmatches()
+"
+"set listchars=trail:#,extends:>,precedes:<
+"set fileencodings=ucs-bom,utf-8,default
+"set list
+"set enc=utf-8
+"" set guifont=Consolas:h11:cANSI
+
 """""""""""""""""""""""""""""""""""""""""
 " Set encodings
 """""""""""""""""""""""""""""""""""""""""
