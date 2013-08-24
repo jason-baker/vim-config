@@ -39,6 +39,8 @@ set softtabstop=4       " 1 tab == 4 spaces during <bs>
 set wrap                " Wrap lines when they go past the end
 "set number              " Show line numbers
 
+" Change the display for listing whitespace
+" @TODO
 
 " Turn on highlighting of white space that shouldn't be there.
 highlight ExtraWhiteSpace ctermbg=red guibg=red
