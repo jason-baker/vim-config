@@ -18,7 +18,7 @@ BAK_PATH="$TMP_PATH/bak"
 # $1    [IN]        The message for the critical error.
 # $2    [IN/OPT]    The error code to return -1 if not provided.
 function critError() {
-    cd $oldDir
+    cd "$oldDir"
     echo "$1" >&2
     exit $2 || -1
 }
@@ -42,7 +42,7 @@ function makeDirectory() {
         mkdir "$1"
         rv=$?
         if [ "0" -ne "$rv" ] ; then
-            critError "Failed to make directory" $rv
+            critError "Failed to make directory: mkdir '$1'" $rv
         fi
     else
         critError "Directory isn't a string."
@@ -54,19 +54,37 @@ function makeDirectory() {
 ##
 # Create a symlink between the two arguments.
 # $1    [IN]        Target of the link
-# $2    [IN]        File to link.
+# $2    [IN]        File to create link at.
 # Will raise critical errors on:
 #   1. The item to link to does not exist.
 #   2. The item to link from already exists and isn't a symlink to the item to link to.
 function createLink() {
-    if [ -z $1 || ! -e $1 ] ; then
+    local rv
+    if [ -z "$1" ] ; then
+        critError "The provided item to link to is empty."
+    elif [ ! -e "$1" ] ; then
         critError "The item to link '$1' to doesn't exist."
     fi
 
-    if [ -e $2 ] ; then
-        if [ -h $2 ] ; then
+    if [ -h "$2" ] ; then
+        local canonicalLink=`readlink -ez $2`
+        local canonicalTarget=`readlink -fz $1`
+
+        if [ "$canonicalTarget" != "$canonicalLink" ] ; then
+            critError "Link exists but points to wrong target: '$canonicalLink' != '$canonicalTarget'"
+        fi
+    elif [ -e "$2" ] ; then
+        critError "non-symbolic link already exists at '$2'"
+    else
+        # Create the link if nothing exists.
+        ln -s "$1" "$2"
+        rv=$?
+        if [ "0" -ne "$rv" ] ; then
+            critError "Failed to create link: ln -s '$1' '$2'" $rv
         fi
     fi
+
+    return 0
 }
 
 # Validate that we have been checked out to $HOME/.vim/ and have a git directory setup.
@@ -74,17 +92,41 @@ function createLink() {
 #   1. Failure to find ~/.vim
 #   2. Failure to perform git check on ~/.vim
 function validateCheckout() {
-    if [ ! -d $VIM_DIR ] ; then
+    if [ ! -d "$VIM_DIR" ] ; then
         critError "The user Vim folder '$VIM_DIR' doesn't exist."
     else
-        cd $VIM_DIR
+        cd "$VIM_DIR"
         local rv
         git status > /dev/null 2>&1
         rv=$?
         if [ "0" -ne "$?" ] ; then
-            critError "Failed to get status on the user Vim folder '$VIM_DIR'"
+            critError "Failed to run git status on the user Vim folder '$VIM_DIR'"
         fi
     fi
+
+    return 0
+}
+
+# Validate that we have the necessary submodules that should be with this git repository.
+# Will raise critical errors on:
+#   1. Failure to get git submodules
+function ensureSubmodules() {
+    local rv
+
+    cd "$VIM_DIR"
+    git submodule init > /dev/null 2>&1
+    rv=$?
+    if [ "0" -ne "$rv" ] ; then
+        critError "Failed to initialize submodules for '$VIM_DIR': git submodule init" $rv
+    fi
+
+    git submodule update > /dev/null 2>&1
+    rv=$?
+    if [ "0" -ne "$rv" ] ; then
+        critError "Failed to update submodules for '$VIM_DIR': git submodule update" $rv
+    fi
+
+    return 0
 }
 
 # Validate the checkout
@@ -92,25 +134,21 @@ echo "Validating checkout..."
 validateCheckout
 
 # Perform the git submodule operations
-echo "Initializing submodules..."
-git submodule init
-if [ "0" -ne "$?" ] ; then
-    critError "Failed to get status on the user Vim folder '$VIM_DIR'"
-fi
-
-echo "Updating submodules..."
-git submodule update
-if [ "0" -ne "$?" ] ; then
-    critError "Failed to get status on the user Vim folder '$VIM_DIR'"
-fi
+echo "Ensuring submodules..."
+ensureSubmodules
 
 # Make all of the expected directories for the vimrc
 echo "Making necessary directories..."
-makeDirectory $TMP_PATH
-makeDirectory $SWP_PATH
-makeDirectory $BAK_PATH
+makeDirectory "$TMP_PATH"
+makeDirectory "$SWP_PATH"
+makeDirectory "$BAK_PATH"
 
 # Create symlinks for .vimrc/.gvimrc
-echo "Create the symlinks"
+echo "Creating all necessary symlinks..."
+createLink "$VIM_DIR/vimrc"     "$HOME/.vimrc"
+createLink "$VIM_DIR/gvimrc"    "$HOME/.gvimrc"
 
-cd $oldDir
+# All done
+echo "Finished!"
+cd "$oldDir"
+exit 0
