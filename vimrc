@@ -1,20 +1,22 @@
+"""""""""""""""""""""""""""""""""""""""""
+" Set backup directory & os specific info
+"""""""""""""""""""""""""""""""""""""""""
+
+if has('win32') || has('win64')
+    set runtimepath=$HOMEDRIVE$HOMEPATH/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOMEDRIVE$HOMEPATH/.vim/after
+    set backupdir=$HOMEDRIVE$HOMEPATH/.vim/tmp/bak  " where to put backup files
+    set directory=$HOMEDRIVE$HOMEPATH/.vim/tmp/swp  " directory to place swap files in
+else
+    set backupdir=$HOME/.vim/tmp/bak    " where to put backup files
+    set directory=$HOME/.vim/tmp/swp    " directory to place swap files in
+end
+
+" Infect with pathogen
 call pathogen#incubate()
 call pathogen#helptags()
 
 " Break vi compatibility
 set nocompatible
-
-"""""""""""""""""""""""""""""""""""""""""
-" Set backup directory
-"""""""""""""""""""""""""""""""""""""""""
-
-if has('win32') || has('win64')
-    set backupdir=$HOMEDRIVE$HOMEPATH/AppData/LocalLow/Vim/tmp/bak  " where to put backup files
-    set directory=$HOMEDRIVE$HOMEPATH/AppData/LocalLow/Vim/tmp/swp  " directory to place swap files in
-else
-    set backupdir=$HOME/.vim/tmp/bak    " where to put backup files
-    set directory=$HOME/.vim/tmp/swp    " directory to place swap files in
-end
 
 """""""""""""""""""""""""""""""""""""""""
 " Basic Interface Settings
