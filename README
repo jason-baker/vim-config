@@ -1,6 +1,13 @@
-Installation:
-    git clone git://<my ip>/vim/dotvim.git ~/.vim
+*nux/OSX Installation:
+    git clone https://github.com/jason-baker/vim-config.git '$HOME/.vim'
+    $HOME/.vim/setup.sh
 
-Create Symlinks:
-    ln -s ~/.vrimc  ~/.vim/vimrc
-    ln -s ~/.gvimrc ~/.vim/gvimrc
+Windows Installation:
+    git clone https://github.com/jason-baker/vim-config.git '%HOMEDRIVE%%HOMEPATH%/.vim'
+
+Option 1:
+    Update secpol.msc 'Local Policies->User Rights Assignment->Create Symbolic Links' to allow your user to create a symbolic link.
+    %HOMEDRIVE%%HOMEPATH%/.vim/setup.bat
+
+Option 2:
+    @TODO
