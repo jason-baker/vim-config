@@ -37,7 +37,10 @@ set smartindent         " Do indenting in and out based on language settings
 " Colors & Fonts
 """""""""""""""""""""""""""""""""""""""""
 syntax on               " Turn on syntax highlighting
-colorscheme desert
+if !has("gui_window")
+    let g:solarized_termcolors=256
+end
+colorscheme solarized
 set background=dark
 set encoding=utf8
 
@@ -52,10 +55,7 @@ set shiftwidth=4        " 1 tab == 4 spaces
 set tabstop=4           " 1 tab == 4 spaces
 set softtabstop=4       " 1 tab == 4 spaces during <bs>
 set wrap                " Wrap lines when they go past the end
-"set number              " Show line numbers
-
-" Change the display for listing whitespace
-" @TODO
+set number              " Show line numbers
 
 " Turn on highlighting of white space that shouldn't be there.
 highlight ExtraWhiteSpace ctermbg=red guibg=red
