@@ -1,3 +1,6 @@
+" Break compatibility/sane reset
+set nocompatible
+
 """""""""""""""""""""""""""""""""""""""""
 " Set backup directory & os specific info
 """""""""""""""""""""""""""""""""""""""""
@@ -15,8 +18,15 @@ end
 call pathogen#incubate()
 call pathogen#helptags()
 
-" Break vi compatibility
-set nocompatible
+"""""""""""""""""""""""""""""""""""""""""
+" Filetype detection information
+"""""""""""""""""""""""""""""""""""""""""
+filetype plugin on
+filetype indent on
+
+set backup          " turn on backup files.
+set writebackup     " Update the backup file on write.
+set swapfile        " Keep swap files.
 
 """""""""""""""""""""""""""""""""""""""""
 " Basic Interface Settings
@@ -42,20 +52,6 @@ if !has("gui_window")
 end
 colorscheme solarized
 set background=dark
-set encoding=utf8
-
-" Special Syntax Highlighting
-
-"""""""""""""""""""""""""""""""""""""""""
-" Tabstops & Text interaction
-"""""""""""""""""""""""""""""""""""""""""
-set expandtab           " Use spaces instead of tab
-set smarttab            " Turn on smart tab
-set shiftwidth=4        " 1 tab == 4 spaces
-set tabstop=4           " 1 tab == 4 spaces
-set softtabstop=4       " 1 tab == 4 spaces during <bs>
-set wrap                " Wrap lines when they go past the end
-set number              " Show line numbers
 
 " Turn on highlighting of white space that shouldn't be there.
 highlight ExtraWhiteSpace ctermbg=red guibg=red
@@ -77,18 +73,42 @@ set listchars=trail:#,extends:>,precedes:<
 set list
 
 """""""""""""""""""""""""""""""""""""""""
-" File specific information
+" Tabstops & Text interaction
 """""""""""""""""""""""""""""""""""""""""
-filetype plugin on
-filetype indent on
+set expandtab                       " Use spaces instead of tab
+set smarttab                        " Turn on smart tab
+set shiftwidth=4                    " 1 tab == 4 spaces
+set tabstop=4                       " 1 tab == 4 spaces
+set softtabstop=4                   " 1 tab == 4 spaces during <bs>
+set wrap                            " Wrap lines when they go past the end
+set number                          " Show line numbers
+set backspace=indent,eol,start      " Allow backspacing over autoindent, line breaks and start of insert action
 
 " Data from other vim to be merged later
 "
 "set guifont=consolas:h11
 "set fileencodings=ucs-bom,utf-8,default
-"set enc=utf-8
 "" set guifont=Consolas:h11:cANSI
 
 """""""""""""""""""""""""""""""""""""""""
 " Set encodings
 """""""""""""""""""""""""""""""""""""""""
+set encoding=utf8
+
+
+"""""""""""""""""""""""""""""""""""""""""
+" Enhanced functionality
+"""""""""""""""""""""""""""""""""""""""""
+
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+set viminfo^=%          " Remember info about open buffers on close
+
+
+" With a map leader it's possible to do extra key combinations
+let mapleader = "\\"
+let g:mapleader = "\\"
+
