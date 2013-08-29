@@ -114,6 +114,11 @@ function ensureSubmodules() {
     local rv
 
     cd "$VIM_DIR"
+    rv=$?
+    if [ "0" -ne "$rv" ] ; then
+        critError "Failed to change directory to the vim checkout '$VIM_DIR'" $rv
+    fi
+
     git submodule init > /dev/null 2>&1
     rv=$?
     if [ "0" -ne "$rv" ] ; then
