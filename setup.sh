@@ -92,11 +92,18 @@ function createLink() {
 #   1. Failure to find ~/.vim
 #   2. Failure to perform git check on ~/.vim
 function validateCheckout() {
+    echo "Validating checkout..."
     if [ ! -d "$VIM_DIR" ] ; then
         critError "The user Vim folder '$VIM_DIR' doesn't exist."
     else
-        cd "$VIM_DIR"
         local rv
+
+        cd "$VIM_DIR"
+        rv=$?
+        if [ "0" -ne "$rv" ] ; then
+            critError "Failed to change directory to the vim checkout '$VIM_DIR'" $rv
+        fi
+
         git status > /dev/null 2>&1
         rv=$?
         if [ "0" -ne "$?" ] ; then
@@ -119,27 +126,36 @@ function ensureSubmodules() {
         critError "Failed to change directory to the vim checkout '$VIM_DIR'" $rv
     fi
 
-    git submodule init > /dev/null 2>&1
-    rv=$?
-    if [ "0" -ne "$rv" ] ; then
-        critError "Failed to initialize submodules for '$VIM_DIR': git submodule init" $rv
+    # Only initialize if the submodules aren't initialized.
+    if [ ! -f "$VIM_DIR\.gitmodules" ] ; then
+        echo "Initializing submodules..."
+        git submodule init > /dev/null 2>&1
+        rv=$?
+        if [ "0" -ne "$rv" ] ; then
+            critError "Failed to initialize submodules for '$VIM_DIR': git submodule init" $rv
+        fi
     fi
 
+    # Get any missing submodules from the project.
+    echo "Retrieving new submodules..."
     git submodule update > /dev/null 2>&1
     rv=$?
     if [ "0" -ne "$rv" ] ; then
         critError "Failed to update submodules for '$VIM_DIR': git submodule update" $rv
     fi
 
+    # Update all submodules
+    echo "Updating all existing submodules..."
+    git submodule foreach git pull origin master > /dev/null 2>&1
+    rv=$?
+    if [ "0" -ne "$rv" ] ; then
+        critError "Failed to update all submodules for '$VIM_DIR': git submodule foreach git pull origin master" $rv
+    fi
+
     return 0
 }
 
-# Validate the checkout
-echo "Validating checkout..."
 validateCheckout
-
-# Perform the git submodule operations
-echo "Ensuring submodules..."
 ensureSubmodules
 
 # Make all of the expected directories for the vimrc
