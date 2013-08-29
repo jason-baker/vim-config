@@ -1,3 +1,9 @@
 [submodule "bundle/colorscheme-solarized"]
 	path = bundle/colorscheme-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
+[submodule "bundle/syntastic"]
+	path = bundle/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "bundle/netrw"]
+	path = bundle/netrw
+	url = https://github.com/vim-scripts/netrw.vim.git
