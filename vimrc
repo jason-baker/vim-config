@@ -55,13 +55,15 @@ set smartindent         " Do indenting in and out based on language settings
 syntax on               " Turn on syntax highlighting
 if !has("gui_window")
     if (os == 'Darwin' || os == 'Mac')
-        set background=light
         colorscheme desert
+        set background=light
     else
-        set background=dark
         let g:solarized_termcolors=256
         colorscheme solarized
+        set background=dark
     end
+else
+    colorscheme solarized
 end
 
 " Turn on highlighting of white space that shouldn't be there.
@@ -122,4 +124,5 @@ set viminfo^=%          " Remember info about open buffers on close
 " With a map leader it's possible to do extra key combinations
 let mapleader = "\\"
 let g:mapleader = "\\"
+
 
