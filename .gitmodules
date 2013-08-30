@@ -7,3 +7,4 @@
 [submodule "bundle/netrw"]
 	path = bundle/netrw
 	url = https://github.com/vim-scripts/netrw.vim.git
+	ignore = dirty
