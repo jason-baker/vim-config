@@ -1,6 +1,12 @@
 " Break compatibility/sane reset
 set nocompatible
 
+" Get the operating system on non-windows machines
+let os="win"
+if !has('win32') && !has('win64')
+    let os =substitute(system('uname'), '\n', '', '')
+endif
+
 """""""""""""""""""""""""""""""""""""""""
 " Set backup directory & os specific info
 """""""""""""""""""""""""""""""""""""""""
@@ -48,10 +54,15 @@ set smartindent         " Do indenting in and out based on language settings
 """""""""""""""""""""""""""""""""""""""""
 syntax on               " Turn on syntax highlighting
 if !has("gui_window")
-    let g:solarized_termcolors=256
+    if (os == 'Darwin' || os == 'Mac')
+        set background=light
+        colorscheme desert
+    else
+        set background=dark
+        let g:solarized_termcolors=256
+        colorscheme solarized
+    end
 end
-colorscheme solarized
-set background=dark
 
 " Turn on highlighting of white space that shouldn't be there.
 highlight ExtraWhiteSpace ctermbg=red guibg=red
