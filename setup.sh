@@ -107,7 +107,6 @@ function createLink() {
 
     if [ -h "$2" ] ; then
         local canonicalLink=$(canonicalReadlink "$2")
-        echo "read path $?"
         if [ "0" != "$?" ] ; then
             critError "Failed to check canonical link."
         fi
@@ -203,12 +202,6 @@ function ensureSubmodules() {
 
 
 validateCheckout
-
-# Create symlinks for .vimrc/.gvimrc
-echo "Creating all necessary symlinks..."
-createLink "$VIM_DIR/vimrc"     "$HOME/.vimrc"
-createLink "$VIM_DIR/gvimrc"    "$HOME/.gvimrc"
-
 ensureSubmodules
 
 # Make all of the expected directories for the vimrc
