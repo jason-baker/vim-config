@@ -23,6 +23,36 @@ function critError() {
     exit $2 || -1
 }
 
+##
+# Run a command with all checks being applied.
+# Will raise critical errors on:
+#   1. Any status code other than 0.
+function runSafeCmd() {
+    local rv
+    "$@" 2> /dev/null
+    rv=$?
+    if [ 0 -ne $rv ] ; then
+        critError "Failed to run command '$@'" $rv
+    fi
+
+    return $rv
+}
+
+##
+# Run a command with all checks being applied but with no stderr or stdout.
+# Will raise critical errors on:
+#   1. Any status code other than 0.
+function runQuietSafeCmd() {
+    local rv
+    "$@" > /dev/null 2>&1
+    rv=$?
+    if [ 0 -ne $rv ] ; then
+        critError "Failed to run command '$@'" $rv
+    fi
+
+    return $rv
+}
+
 #Find the operating system we are on because non-linux machines are problematic
 OS=`uname -s`
 
@@ -33,7 +63,6 @@ OS=`uname -s`
 #   1. Something other than a directory already exists at the path.
 #   2. Error creating the directory.
 function makeDirectory() {
-    local rv
     if [ -n "$1" ] ; then
         if [ -e "$1" ] ; then
             if [ -d "$1" ] ; then
@@ -42,11 +71,7 @@ function makeDirectory() {
                 critError "Trying to make directory at '$1' but something else exists there."
             fi
         fi
-        mkdir "$1"
-        rv="$?"
-        if [ "0" != "$rv" ] ; then
-            critError "Failed to make directory: mkdir '$1'" $rv
-        fi
+        runQuietSafeCmd mkdir "$1"
     else
         critError "Directory isn't a string."
     fi
@@ -65,29 +90,19 @@ function canonicalReadlink() {
         critError "Target does not exist '$1'"
     elif [ ! -h "$1" ] ; then
         echo `dirname "$1"`/`basename "$1"`
-        return 1
     else
         local link
         local rv
         if [ "$OS" == "Linux" ] ; then
-            link=`readlink "-z" "$1" 2> /dev/null`
-            rv="$?"
-            if [ "0" != "$rv" ] ; then
-                critError "Command failed: readlink -z '$1'" $rv
-            fi
+            link=$(runSafeCmd readlink "-z" "$1" 2> /dev/null)
         else
-            link=`readlink "-n" "$1" 2> /dev/null`
-            rv="$?"
-            if [ "0" != "$rv" ] ; then
-                critError "Command failed: readlink -n '$1'" $rv
-            fi
+            link=$(runSafeCmd readlink "-n" "$1" 2> /dev/null)
         fi
 
         canonicalReadlink "$link"
-        return $?
     fi
 
-    return 0
+    return $?
 }
 
 ##
@@ -98,7 +113,6 @@ function canonicalReadlink() {
 #   1. The item to link to does not exist.
 #   2. The item to link from already exists and isn't a symlink to the item to link to.
 function createLink() {
-    local rv
     if [ -z "$1" ] ; then
         critError "The provided item to link to is empty."
     elif [ ! -e "$1" ] ; then
@@ -107,12 +121,12 @@ function createLink() {
 
     if [ -h "$2" ] ; then
         local canonicalLink=$(canonicalReadlink "$2")
-        if [ "0" != "$?" ] ; then
-            critError "Failed to check canonical link."
+        if [ 0 -ne $? ] ; then
+            critError "Failed to canonicalize link path at '$2'"
         fi
         local canonicalTarget=$(canonicalReadlink "$1")
-        if [ "0" != "$?" ] ; then
-            critError "Failed to check canonical link."
+        if [ 0 -ne $? ] ; then
+            critError "Failed to get canonical path of '$1'"
         fi
 
         if [ "$canonicalTarget" != "$canonicalLink" ] ; then
@@ -122,11 +136,7 @@ function createLink() {
         critError "non-symbolic link already exists at '$2'"
     else
         # Create the link if nothing exists.
-        ln -s "$1" "$2"
-        rv="$?"
-        if [ "0" != "$rv" ] ; then
-            critError "Failed to create link: ln -s '$1' '$2'" $rv
-        fi
+        runQuietSafeCmd ln -s "$1" "$2"
     fi
 
     return 0
@@ -141,19 +151,8 @@ function validateCheckout() {
     if [ ! -d "$VIM_DIR" ] ; then
         critError "The user Vim folder '$VIM_DIR' doesn't exist."
     else
-        local rv
-
-        cd "$VIM_DIR"
-        rv="$?"
-        if [ "0" != "$rv" ] ; then
-            critError "Failed to change directory to the vim checkout '$VIM_DIR'" $rv
-        fi
-
-        git status > /dev/null 2>&1
-        rv="$?"
-        if [ "0" != "$rv" ] ; then
-            critError "Failed to run git status on the user Vim folder '$VIM_DIR'"
-        fi
+        runQuietSafeCmd cd "$VIM_DIR"
+        runQuietSafeCmd git status
     fi
 
     return 0
@@ -163,39 +162,21 @@ function validateCheckout() {
 # Will raise critical errors on:
 #   1. Failure to get git submodules
 function ensureSubmodules() {
-    local rv
-
-    cd "$VIM_DIR"
-    rv="$?"
-    if [ "0" != "$rv" ] ; then
-        critError "Failed to change directory to the vim checkout '$VIM_DIR'" $rv
-    fi
+    runQuietSafeCmd cd "$VIM_DIR"
 
     # Only initialize if the submodules aren't initialized.
     if [ ! -f "$VIM_DIR\.gitmodules" ] ; then
         echo "Initializing submodules..."
-        git submodule init > /dev/null 2>&1
-        rv="$?"
-        if [ "0" != "$rv" ] ; then
-            critError "Failed to initialize submodules for '$VIM_DIR': git submodule init" $rv
-        fi
+        runQuietSafeCmd git submodule init
     fi
 
     # Get any missing submodules from the project.
     echo "Retrieving new submodules..."
-    git submodule update > /dev/null 2>&1
-    rv="$?"
-    if [ "0" != "$rv" ] ; then
-        critError "Failed to update submodules for '$VIM_DIR': git submodule update" $rv
-    fi
+    runQuietSafeCmd git submodule update
 
     # Update all submodules
     echo "Updating all existing submodules..."
-    git submodule foreach git pull origin master > /dev/null 2>&1
-    rv="$?"
-    if [ "0" != "$rv" ] ; then
-        critError "Failed to update all submodules for '$VIM_DIR': git submodule foreach git pull origin master" $rv
-    fi
+    runQuietSafeCmd git submodule foreach git pull origin master
 
     return 0
 }
