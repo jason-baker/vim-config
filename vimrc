@@ -53,6 +53,7 @@ set smartindent         " Do indenting in and out based on language settings
 " Colors & Fonts
 """""""""""""""""""""""""""""""""""""""""
 syntax on               " Turn on syntax highlighting
+let g:solarized_italic=0
 if !has("gui_window")
     if (os == 'Darwin' || os == 'Mac')
         colorscheme desert
