@@ -60,8 +60,9 @@ if !has("gui_window")
         set background=light
     else
         let g:solarized_termcolors=256
-        colorscheme solarized
+        set t_Co=256
         set background=dark
+        colorscheme solarized
     end
 else
     colorscheme solarized
