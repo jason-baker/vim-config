@@ -56,8 +56,10 @@ syntax on               " Turn on syntax highlighting
 let g:solarized_italic=0
 if !has("gui_window")
     if (os == 'Darwin' || os == 'Mac')
-        colorscheme desert
         set background=light
+        colorscheme desert
+    elseif (&term =~ 'linux')
+        colorscheme elflord
     else
         let g:solarized_termcolors=256
         set t_Co=256
