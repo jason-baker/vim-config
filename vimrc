@@ -4,7 +4,7 @@ set nocompatible
 " Get the operating system on non-windows machines
 let os="win"
 if !has('win32') && !has('win64')
-    let os =substitute(system('uname'), '\n', '', '')
+    let os=substitute(system('uname'), '\n', '', '')
 endif
 
 """""""""""""""""""""""""""""""""""""""""
@@ -58,7 +58,8 @@ if !has("gui_window")
     if (os == 'Darwin' || os == 'Mac')
         set background=light
         colorscheme desert
-    elseif (&term =~ 'linux')
+    elseif (os == "win" || &term =~ 'linux')
+        set background=dark
         colorscheme elflord
     else
         let g:solarized_termcolors=256
@@ -66,8 +67,6 @@ if !has("gui_window")
         set background=dark
         colorscheme solarized
     end
-else
-    colorscheme solarized
 end
 
 " Turn on highlighting of white space that shouldn't be there.
