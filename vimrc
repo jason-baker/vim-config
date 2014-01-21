@@ -67,6 +67,7 @@ if !has("gui_window")
         set t_Co=256
         set background=dark
         colorscheme solarized
+        set background=dark
     end
 end
 
