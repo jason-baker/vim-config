@@ -39,6 +39,7 @@ set swapfile        " Keep swap files.
 """""""""""""""""""""""""""""""""""""""""
 set ruler               " Show the ruler
 set cmdheight=2         " Make the command window heighgh 2 high
+set noea                " Disable automatic window resize on buffer create or close
 set ignorecase          " Ignore case when searching
 set smartcase           " Ignore ignorecase if uppercase values are present
 set incsearch           " Search incrementally as it is typed
@@ -121,7 +122,7 @@ autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
-set viminfo^=%          " Remember info about open buffers on close
+set viminfo^=           " Remember info about open buffers on close
 
 
 " With a map leader it's possible to do extra key combinations
