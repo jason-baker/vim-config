@@ -8,3 +8,6 @@
 	path = bundle/netrw
 	url = https://github.com/vim-scripts/netrw.vim.git
 	ignore = dirty
+[submodule "bundle/DirDiff"]
+	path = bundle/DirDiff
+	url = https://github.com/vim-scripts/DirDiff.vim
