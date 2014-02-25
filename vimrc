@@ -130,4 +130,9 @@ set viminfo^=           " Remember info about open buffers on close
 let mapleader = "\\"
 let g:mapleader = "\\"
 
-
+"xml lint the current file `:% !xmllint.exe % --format
+if (os == "win")
+    nnoremap <leader>xl :% !xmllint.exe % --format <CR>
+else
+    nnoremap <leader>xl :% !xmllint % --format <CR>
+endif
