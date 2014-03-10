@@ -119,6 +119,7 @@ function SetTabValidity()
     if (&ft =~ 'html\|xml')
         augroup Group_UnwantedTabs
             autocmd!
+            highlight clear UnwantedTabs
         augroup END
 
         set listchars+=tab:\ \ 
