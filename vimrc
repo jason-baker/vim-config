@@ -54,6 +54,7 @@ set smartindent         " Do indenting in and out based on language settings
 " Colors & Fonts
 """""""""""""""""""""""""""""""""""""""""
 syntax on               " Turn on syntax highlighting
+
 let g:solarized_italic=0
 if !has("gui_window")
     if (os == 'Darwin' || os == 'Mac')
@@ -72,20 +73,16 @@ if !has("gui_window")
 end
 
 " Turn on highlighting of white space that shouldn't be there.
-highlight ExtraWhiteSpace ctermbg=red guibg=red
-match ExtraWhiteSpace /s\+$|\t/
-autocmd BufWinEnter * match ExtraWhiteSpace /\s\+$/
-autocmd InsertEnter * match ExtraWhiteSpace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
-
-" Turn on highlighting of tab characters that shouldn't be there.
-highlight TabWhitespace ctermbg=red guibg=red
-match TabWhitespace /\t\+/
-autocmd BufWinEnter * match TabWhitespace /\s\+$/
-autocmd InsertEnter * match TabWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match TabWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+augroup Group_ExtraWhiteSpace
+    autocmd!
+    highlight ExtraWhiteSpace ctermbg=red guibg=red
+    match ExtraWhiteSpace /\s\+$|\t/
+    autocmd ColorScheme * highlight ExtraWhiteSpace ctermbg=red guibg=red
+    autocmd BufWinEnter * match ExtraWhiteSpace /\s\+$/
+    autocmd InsertEnter * match ExtraWhiteSpace /\s\+\%#\@<!$/
+    autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
+    autocmd BufWinLeave * call clearmatches()
+augroup END
 
 set listchars=trail:#,extends:>,precedes:<
 set list
@@ -93,7 +90,7 @@ set list
 """""""""""""""""""""""""""""""""""""""""
 " Tabstops & Text interaction
 """""""""""""""""""""""""""""""""""""""""
-set expandtab                       " Use spaces instead of tab
+set expandtab
 set smarttab                        " Turn on smart tab
 set shiftwidth=4                    " 1 tab == 4 spaces
 set tabstop=4                       " 1 tab == 4 spaces
@@ -113,18 +110,43 @@ set backspace=indent,eol,start      " Allow backspacing over autoindent, line br
 """""""""""""""""""""""""""""""""""""""""
 set encoding=utf8
 
-
 """""""""""""""""""""""""""""""""""""""""
 " Enhanced functionality
 """""""""""""""""""""""""""""""""""""""""
 
+" Function to determine which files get tab complaints
+function SetTabValidity()
+    if (&ft =~ 'html\|xml')
+        augroup Group_UnwantedTabs
+            autocmd!
+        augroup END
+
+        set listchars+=tab:\ \ 
+        set noexpandtab
+    else
+        " Turn on highlighting of tab characters that shouldn't be there.
+        augroup Group_UnwantedTabs
+            autocmd!
+            highlight UnwantedTabs ctermbg=red guibg=red
+            2match UnwantedTabs /\t\+/
+            autocmd ColorScheme * highlight UnwantedTabs ctermbg=red guibg=red
+            autocmd BufWinEnter * match UnwantedTabs /\s\+$/
+            autocmd InsertEnter * match UnwantedTabs /\s\+\%#\@<!$/
+            autocmd InsertLeave * match UnwantedTabs /\s\+$/
+            autocmd BufWinLeave * call clearmatches()
+        augroup END
+
+        set expandtab
+    endif
+endfunction
+autocmd filetype * call SetTabValidity()
+
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
 set viminfo^=           " Remember info about open buffers on close
-
 
 " With a map leader it's possible to do extra key combinations
 let mapleader = "\\"
