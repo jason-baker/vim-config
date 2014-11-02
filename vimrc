@@ -116,7 +116,7 @@ set encoding=utf8
 
 " Function to determine which files get tab complaints
 function SetTabValidity()
-    if (&ft =~ 'html\|xml')
+    if (&ft =~ 'html\|xml\|css')
         augroup Group_UnwantedTabs
             autocmd!
             highlight clear UnwantedTabs
