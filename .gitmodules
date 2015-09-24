@@ -1,19 +1,25 @@
 [submodule "bundle/colorscheme-solarized"]
 	path = bundle/colorscheme-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
+	branch = master
 [submodule "bundle/syntastic"]
 	path = bundle/syntastic
 	url = https://github.com/scrooloose/syntastic.git
+	branch = master
 [submodule "bundle/netrw"]
 	path = bundle/netrw
 	url = https://github.com/vim-scripts/netrw.vim.git
+	branch = master
 	ignore = dirty
 [submodule "bundle/DirDiff"]
 	path = bundle/DirDiff
 	url = https://github.com/vim-scripts/DirDiff.vim
+	branch = master
 [submodule "bundle/vim-fugitive"]
 	path = bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
+	branch = master
 [submodule "bundle/plantuml-syntax"]
 	path = bundle/plantuml-syntax
 	url = https://github.com/aklt/plantuml-syntax
+	branch = master

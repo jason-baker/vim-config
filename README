@@ -3,11 +3,15 @@
     $HOME/.vim/setup.sh
 
 Windows Installation:
-    git clone https://github.com/jason-baker/vim-config.git '%HOMEDRIVE%%HOMEPATH%/.vim'
+    git clone https://github.com/jason-baker/vim-config.git "%HOMEDRIVE%%HOMEPATH%/.vim"
 
 Option 1:
     Update secpol.msc 'Local Policies->User Rights Assignment->Create Symbolic Links' to allow your user to create a symbolic link.
-    %HOMEDRIVE%%HOMEPATH%/.vim/setup.bat
+    "%HOMEDRIVE%%HOMEPATH%/.vim/setup.bat"
 
 Option 2:
-    @TODO
+    "%HOMEDRIVE%%HOMEPATH%/.vim/setup.bat"
+    Either follow the prompts to copy the files or manually copy vimrc and gvimrc.
+    copy "%HOMEDRIVE%%HOMEPATH%/.vim/vimrc" "%HOMEDRIVE%%HOMEPATH%/_vimrc"
+    copy "%HOMEDRIVE%%HOMEPATH%/.vim/gvimrc" "%HOMEDRIVE%%HOMEPATH%/_gvimrc"
+    WARNING: You will have to manually update the files via the setup script or by hand every time you pull in changes in this scenario.
