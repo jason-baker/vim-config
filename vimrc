@@ -116,7 +116,7 @@ set encoding=utf8
 
 " Function to determine which files get tab complaints
 function SetTabValidity()
-    if (&ft =~ 'html\|xml\|css')
+    if (&ft =~ 'html\|xml\|css\|go')
         augroup Group_UnwantedTabs
             autocmd!
             highlight clear UnwantedTabs
@@ -148,6 +148,11 @@ autocmd BufReadPost *
     \   exe "normal! g`\"" |
     \ endif
 set viminfo^=           " Remember info about open buffers on close
+
+" Syntastic options
+let g:syntastic_check_on_open = 1
+let g:syntastic_enable_highlighting = 0
+let g:syntastic_python_flake8_post_args = '--ignore=E501'
 
 " With a map leader it's possible to do extra key combinations
 let mapleader = "\\"
