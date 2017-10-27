@@ -23,3 +23,6 @@
 	path = bundle/plantuml-syntax
 	url = https://github.com/aklt/plantuml-syntax
 	branch = master
+[submodule "bundle/vim-go"]
+	path = bundle/vim-go
+	url = https://github.com/fatih/vim-go.git
