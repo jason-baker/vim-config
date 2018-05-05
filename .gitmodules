@@ -19,3 +19,6 @@
 	path = bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
 	branch = master
+[submodule "bundle/vim-go"]
+	path = bundle/vim-go
+	url = https://github.com/fatih/vim-go.git
