@@ -152,7 +152,7 @@ set viminfo^=           " Remember info about open buffers on close
 " Syntastic options
 let g:syntastic_check_on_open = 1
 let g:syntastic_enable_highlighting = 0
-let g:syntastic_python_flake8_post_args = '--ignore=E501'
+let g:syntastic_python_flake8_post_args = '--ignore=E501,E402'
 let g:syntastic_go_checkers = ['gofmt']
 
 " With a map leader it's possible to do extra key combinations
